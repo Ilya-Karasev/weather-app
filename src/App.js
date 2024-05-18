@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import SearchForm from './components/SearchForm';
+import WeatherInfo from './components/WeatherInfo';
+import WeatherAPI from './APIs/WeatherAPI';
+import StoreProvider from './store/StoreContext';
+import ClockLock from './components/ClockLock';
+import { Container, Typography, CircularProgress, Card } from '@mui/material';
 
-function App() {
+const App = () => {
+  const [city, setCity] = useState('');
+  const [weatherData, setWeatherData] = useState(null);
+  const [requestTime, setRequestTime] = useState(null);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <StoreProvider>
+      <Container>
+        <SearchForm onSubmit={setCity} />
+        <WeatherAPI city={city} setWeatherData={setWeatherData} setRequestTime={setRequestTime} />
+        <Card style={{ padding: '1rem' }}>
+          {weatherData ? (
+            <WeatherInfo weatherData={weatherData} requestTime={requestTime} />
+          ) : (
+            <Typography variant="body1" gutterBottom>
+              Ожидаем запрос... <CircularProgress />
+            </Typography>
+          )}
+        </Card>
+        <ClockLock />
+      </Container>
+    </StoreProvider>
   );
-}
+};
 
 export default App;
